@@ -955,4 +955,9 @@ public class KafkaCluster extends AbstractModel {
     public boolean isExposedWithNodePort()  {
         return isExposed() && listeners.getExternal() instanceof KafkaListenerExternalNodePort;
     }
+
+    @Override
+    public KafkaConfiguration getConfiguration() {
+        return (KafkaConfiguration) configuration;
+    }
 }

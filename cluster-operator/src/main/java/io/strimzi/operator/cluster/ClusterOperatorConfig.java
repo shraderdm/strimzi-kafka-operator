@@ -4,6 +4,7 @@
  */
 package io.strimzi.operator.cluster;
 
+import io.strimzi.operator.cluster.model.ModelUtils;
 import io.strimzi.operator.common.InvalidConfigurationException;
 
 import java.util.HashSet;
@@ -21,6 +22,7 @@ public class ClusterOperatorConfig {
     public static final String STRIMZI_NAMESPACE = "STRIMZI_NAMESPACE";
     public static final String STRIMZI_FULL_RECONCILIATION_INTERVAL_MS = "STRIMZI_FULL_RECONCILIATION_INTERVAL_MS";
     public static final String STRIMZI_OPERATION_TIMEOUT_MS = "STRIMZI_OPERATION_TIMEOUT_MS";
+    public static final String STRIMZI_KAFKA_IMAGE_MAP = "STRIMZI_KAFKA_IMAGE_MAP";
 
     public static final long DEFAULT_FULL_RECONCILIATION_INTERVAL_MS = 120_000;
     public static final long DEFAULT_OPERATION_TIMEOUT_MS = 300_000;
@@ -29,6 +31,8 @@ public class ClusterOperatorConfig {
     private final long reconciliationIntervalMs;
     private final long operationTimeoutMs;
 
+    private final Map<String, String> imageMap;
+
     /**
      * Constructor
      *
@@ -36,10 +40,11 @@ public class ClusterOperatorConfig {
      * @param reconciliationIntervalMs    specify every how many milliseconds the reconciliation runs
      * @param operationTimeoutMs    timeout for internal operations specified in milliseconds
      */
-    public ClusterOperatorConfig(Set<String> namespaces, long reconciliationIntervalMs, long operationTimeoutMs) {
+    public ClusterOperatorConfig(Set<String> namespaces, long reconciliationIntervalMs, long operationTimeoutMs, Map<String, String> imageMap) {
         this.namespaces = unmodifiableSet(new HashSet<>(namespaces));
         this.reconciliationIntervalMs = reconciliationIntervalMs;
         this.operationTimeoutMs = operationTimeoutMs;
+        this.imageMap = imageMap;
     }
 
     /**
@@ -70,7 +75,9 @@ public class ClusterOperatorConfig {
             operationTimeout = Long.parseLong(operationTimeoutEnvVar);
         }
 
-        return new ClusterOperatorConfig(namespaces, reconciliationInterval, operationTimeout);
+        Map<String, String> imageMap = ModelUtils.parseImageMap(map.get(STRIMZI_KAFKA_IMAGE_MAP));
+
+        return new ClusterOperatorConfig(namespaces, reconciliationInterval, operationTimeout, imageMap);
     }
 
 
@@ -95,11 +102,16 @@ public class ClusterOperatorConfig {
         return operationTimeoutMs;
     }
 
+    public Map<String, String> getImageMap() {
+        return imageMap;
+    }
+
     @Override
     public String toString() {
         return "ClusterOperatorConfig(" +
                 "namespaces=" + namespaces +
                 ",reconciliationIntervalMs=" + reconciliationIntervalMs +
+                ",imageMap=" + imageMap +
                 ")";
     }
 }

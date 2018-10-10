@@ -4,11 +4,6 @@
  */
 package io.strimzi.operator.cluster.operator.resource;
 
-import io.strimzi.operator.cluster.model.AbstractModel;
-import io.strimzi.operator.common.operator.resource.AbstractScalableResourceOperator;
-import io.strimzi.operator.common.operator.resource.PodOperator;
-import io.strimzi.operator.common.operator.resource.ReconcileResult;
-
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Volume;
@@ -18,12 +13,15 @@ import io.fabric8.kubernetes.api.model.extensions.StatefulSetList;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
+import io.strimzi.operator.cluster.model.AbstractModel;
+import io.strimzi.operator.common.operator.resource.AbstractScalableResourceOperator;
+import io.strimzi.operator.common.operator.resource.PodOperator;
+import io.strimzi.operator.common.operator.resource.ReconcileResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,7 @@ public abstract class StatefulSetOperator extends AbstractScalableResourceOperat
 
     private static final Logger log = LogManager.getLogger(StatefulSetOperator.class.getName());
     private final PodOperator podOperations;
-    private final long operationTimeoutMs;
+    protected final long operationTimeoutMs;
 
     /**
      * Constructor
@@ -300,4 +298,5 @@ public abstract class StatefulSetOperator extends AbstractScalableResourceOperat
         }
         return resource.getMetadata().getUid();
     }
+
 }
